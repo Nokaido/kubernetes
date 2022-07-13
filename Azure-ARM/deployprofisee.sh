@@ -137,12 +137,12 @@ if [ "$USEKEYVAULT" = "Yes" ]; then
 	kubernetesPricipalId=$(az aks show -n $CLUSTERNAME -g $RESOURCEGROUPNAME --query identityProfile.kubeletidentity.objectId -o tsv)
 
 	echo $"Managing Identity configuration for KV access - step 1 started"
-	echo "Running az role assignment create --role "Managed Identity Operator" --assignee $kubernetesPricipalId --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$RESOURCEGROUPNAME"
-	az role assignment create --role "Managed Identity Operator" --assignee $kubernetesPricipalId --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$RESOURCEGROUPNAME
-	echo "Running az role assignment create --role "Managed Identity Operator" --assignee $kubernetesPricipalId --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$AKSINFRARESOURCEGROUPNAME"
-	az role assignment create --role "Managed Identity Operator" --assignee $kubernetesPricipalId --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$AKSINFRARESOURCEGROUPNAME
-	echo "Running az role assignment create --role "Virtual Machine Contributor" --assignee $kubernetesPricipalId --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$AKSINFRARESOURCEGROUPNAME"
-	az role assignment create --role "Virtual Machine Contributor" --assignee $kubernetesPricipalId --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$AKSINFRARESOURCEGROUPNAME
+	echo "Running az role assignment create --role "Managed Identity Operator" --assignee-object-id $kubernetesPricipalId --assignee-principal-type ServicePrincipal --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$RESOURCEGROUPNAME"
+	az role assignment create --role "Managed Identity Operator" --assignee-object-id $kubernetesPricipalId --assignee-principal-type ServicePrincipal --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$RESOURCEGROUPNAME
+	echo "Running az role assignment create --role "Managed Identity Operator" --assignee-object-id $kubernetesPricipalId --assignee-principal-type ServicePrincipal --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$AKSINFRARESOURCEGROUPNAME"
+	az role assignment create --role "Managed Identity Operator" --assignee-object-id $kubernetesPricipalId --assignee-principal-type ServicePrincipal --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$AKSINFRARESOURCEGROUPNAME
+	echo "Running az role assignment create --role "Virtual Machine Contributor" --assignee-object-id $kubernetesPricipalId --assignee-principal-type ServicePrincipal --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$AKSINFRARESOURCEGROUPNAME"
+	az role assignment create --role "Virtual Machine Contributor" --assignee-object-id $kubernetesPricipalId --assignee-principal-type ServicePrincipal --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$AKSINFRARESOURCEGROUPNAME
 	echo $"Managing Identity configuration for KV access - step 1 finished"
 
 	#Create AD Identity, get clientid and principalid to assign the reader role to (next command)
@@ -178,16 +178,16 @@ if [ "$USEKEYVAULT" = "Yes" ]; then
 	else
 		echo $"Setting policies."
 		echo $"Managing Identity configuration for KV access - step 3a started"
-		echo "Running az keyvault set-policy -n $keyVaultName --subscription $keyVaultSubscriptionId --secret-permissions get --spn $principalId --query id"
-		az keyvault set-policy -n $keyVaultName --subscription $keyVaultSubscriptionId --secret-permissions get --spn $principalId --query id
+		echo "Running az keyvault set-policy -n $keyVaultName --subscription $keyVaultSubscriptionId --secret-permissions get --object-id $principalId --query id"
+		az keyvault set-policy -n $keyVaultName --subscription $keyVaultSubscriptionId --secret-permissions get --object-id $principalId --query id
 
 		echo $"Managing Identity configuration for KV access - step 3b started"
-		echo "Running az keyvault set-policy -n $keyVaultName --subscription $keyVaultSubscriptionId --key-permissions get --spn $principalId --query id"
-		az keyvault set-policy -n $keyVaultName --subscription $keyVaultSubscriptionId --key-permissions get --spn $principalId --query id
+		echo "Running az keyvault set-policy -n $keyVaultName --subscription $keyVaultSubscriptionId --key-permissions get --object-id $principalId --query id"
+		az keyvault set-policy -n $keyVaultName --subscription $keyVaultSubscriptionId --key-permissions get --object-id $principalId --query id
 
 		echo $"Managing Identity configuration for KV access - step 3c started"
-		echo "Running az keyvault set-policy -n $keyVaultName --subscription $keyVaultSubscriptionId --certificate-permissions get --spn $principalId --query id"
-		az keyvault set-policy -n $keyVaultName --subscription $keyVaultSubscriptionId --certificate-permissions get --spn $principalId --query id
+		echo "Running az keyvault set-policy -n $keyVaultName --subscription $keyVaultSubscriptionId --certificate-permissions get --object-id $principalId --query id"
+		az keyvault set-policy -n $keyVaultName --subscription $keyVaultSubscriptionId --certificate-permissions get --object-id $principalId --query id
 
 		echo $"Managing Identity configuration for KV access - step 3 finished"
 		echo $"Managing Identity configuration for KV access - finished"
